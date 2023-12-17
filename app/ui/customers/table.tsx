@@ -1,19 +1,28 @@
-import Image from 'next/image';
-import { lusitana } from '@/app/ui/fonts';
-import Search from '@/app/ui/search';
-import { CustomersTable, FormattedCustomersTable } from '@/app/lib/definitions';
+import Image from "next/image";
+import { lusitana } from "@/app/ui/fonts";
+import Search from "@/app/ui/search";
+import { CustomersTable, FormattedCustomersTable } from "@/app/lib/definitions";
+import { CreateInvoice, DeleteInvoice } from "./buttons";
+import { formatDateToLocal, formatCurrency } from "@/app/lib/utils";
+import { auth } from "@/auth";
+import { fetchFilteredCustomersPerTutor } from "@/app/lib/data";
 
 export default async function CustomersTable({
-  customers,
+  query,
+  currentPage,
 }: {
-  customers: FormattedCustomersTable[];
+  query: string;
+  currentPage: number;
 }) {
+  const { user } = await auth();
+  const customers = await fetchFilteredCustomersPerTutor(
+    user,
+    query,
+    currentPage
+  );
+
   return (
-    <div className="w-full">
-      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
-        Customers
-      </h1>
-      <Search placeholder="Search customers..." />
+    <>
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -22,7 +31,7 @@ export default async function CustomersTable({
                 {customers?.map((customer) => (
                   <div
                     key={customer.id}
-                    className="mb-2 w-full rounded-md bg-white p-4"
+                    className="mb-2 w-full rounded-md bg-white p-4 border-2 border-gray-400"
                   >
                     <div className="flex items-center justify-between border-b pb-4">
                       <div>
@@ -45,16 +54,20 @@ export default async function CustomersTable({
                     </div>
                     <div className="flex w-full items-center justify-between border-b py-5">
                       <div className="flex w-1/2 flex-col">
-                        <p className="text-xs">Pending</p>
-                        <p className="font-medium">{customer.total_pending}</p>
+                        <p className="text-xs">Pendent</p>
+                        <p className="font-medium">
+                          {formatCurrency(parseInt(customer.total_pending))}
+                        </p>
                       </div>
                       <div className="flex w-1/2 flex-col">
-                        <p className="text-xs">Paid</p>
-                        <p className="font-medium">{customer.total_paid}</p>
+                        <p className="text-xs">Pagat</p>
+                        <p className="font-medium">
+                          {formatCurrency(parseInt(customer.total_paid))}
+                        </p>
                       </div>
                     </div>
                     <div className="pt-4 text-sm">
-                      <p>{customer.total_invoices} invoices</p>
+                      <p>{customer.total_invoices} factures</p>
                     </div>
                   </div>
                 ))}
@@ -63,19 +76,22 @@ export default async function CustomersTable({
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                      Name
+                      Nom
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
                       Email
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Total Invoices
+                      Total
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Total Pending
+                      Pendent
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Total Paid
+                      Acumulat
+                    </th>
+                    <th scope="col" className="relative py-3 pl-6 pr-3">
+                      <span className="sr-only">Edit</span>
                     </th>
                   </tr>
                 </thead>
@@ -102,10 +118,15 @@ export default async function CustomersTable({
                         {customer.total_invoices}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.total_pending}
+                        {formatCurrency(parseInt(customer.total_pending))}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {customer.total_paid}
+                        {formatCurrency(parseInt(customer.total_paid))}
+                      </td>
+                      <td className="whitespace-nowrap py-3 pl-6 pr-3 bg-white">
+                        <div className="flex  gap-3">
+                          <DeleteInvoice id={customer.id} />
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -115,6 +136,6 @@ export default async function CustomersTable({
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -12,13 +12,14 @@ import { useFormState, useFormStatus } from "react-dom";
 import { authenticate } from "@/app/lib/actions";
 import Link from "next/link";
 
-export default function LoginForm() {
+export default function SignForm() {
   const [state, dispatch] = useFormState(authenticate, undefined);
+  console.log("state: ", state);
   return (
     <form action={dispatch} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
-          Please log in to continue.
+          Please register in to continue.
         </h1>
         <div className="w-full">
           <div>
@@ -76,10 +77,10 @@ export default function LoginForm() {
         </div>
         <div className="flex items-center justify-center">
           <Link
-            href="/singup"
+            href="/login"
             className="flex h-10 items-center rounded-lg bg-orange-400 px-4 text-sm font-medium text-white transition-colors hover:bg-orange-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400 active:bg-orange-500 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
           >
-            Registro
+            Entrar
           </Link>
         </div>
       </div>
@@ -92,7 +93,7 @@ function LoginButton() {
 
   return (
     <Button className="mt-4 w-full" aria-disabled={pending}>
-      Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+      Registrarse <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
     </Button>
   );
 }

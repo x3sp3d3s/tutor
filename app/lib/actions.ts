@@ -5,6 +5,8 @@ import { sql } from "@vercel/postgres";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { signIn } from "@/auth";
+import { v4 as uuidv4 } from "uuid";
+import { auth } from "@/auth";
 
 const FormSchema = z.object({
   id: z.string(),
@@ -20,6 +22,12 @@ const FormSchema = z.object({
   date: z.string(),
 });
 
+const CreateCustomer = z.object({
+  customerNom: z.string().min(1, "El nom es obligatori."),
+
+  customerEmail: z.string().email("Email invalid i obligatori"),
+});
+
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 
 // Use Zod to update the expected types
@@ -30,6 +38,13 @@ export type State = {
     customerId?: string[];
     amount?: string[];
     status?: string[];
+  };
+  message?: string | null;
+};
+export type StateCustomer = {
+  errors?: {
+    customerNom?: string[];
+    customerEmail?: string[];
   };
   message?: string | null;
 };
@@ -126,7 +141,6 @@ export async function updateInvoice(
   redirect("/dashboard/invoices");
 }
 export async function deleteInvoice(id: string) {
-  //throw new Error("Failed to Delete Invoice");
   try {
     await sql`DELETE FROM invoices WHERE id = ${id}`;
     revalidatePath("/dashboard/invoices");
@@ -134,4 +148,62 @@ export async function deleteInvoice(id: string) {
   } catch (error) {
     return { message: "Database Error: Failed to Delete Invoice." };
   }
+}
+export async function deleteCustomerWithId(id: string) {
+  console.log("Borro id: ", id);
+  try {
+    await sql`DELETE FROM customers WHERE id = ${id}`;
+    revalidatePath("/dashboard/customers");
+    return { message: "Alumne eliminat." };
+  } catch (error) {
+    return { message: "Database Error: Alumne NO eliminat." };
+  }
+}
+export async function createCustomer(
+  prevState: StateCustomer,
+  formData: FormData
+) {
+  const { user } = await auth();
+  const { rows } = await sql`SELECT id FROM users WHERE email = ${user.email}`;
+  const id = rows[0].id;
+
+  // Validate form using Zod
+  const validatedFields = CreateCustomer.safeParse({
+    customerNom: formData.get("customerNom"),
+    customerEmail: formData.get("customerEmail"),
+  });
+
+  // If form validation fails, return errors early. Otherwise, continue.
+  if (!validatedFields.success) {
+    console.log("FAIL");
+
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Falten camps. Impossible crear alumne.",
+    };
+  }
+
+  // Prepare data for insertion into the database
+  const { customerNom, customerEmail } = validatedFields.data;
+  const uuid = uuidv4();
+  const image_url = "/customers/emil-kowalski.png";
+  //const tutor = "80c01086-b916-40ff-a3d4-ebc43256a26b";
+  console.log("PASS: ", customerNom, customerEmail, uuid, image_url, id);
+
+  // Insert data into the database
+  try {
+    await sql`
+        INSERT INTO customers (id, name, email, image_url,tutor)
+        VALUES (${uuid},${customerNom}, ${customerEmail},${image_url},${id})
+      `;
+    console.log("TRY: ", customerNom, customerEmail, uuid);
+  } catch (error) {
+    // If a database error occurs, return a more specific error.
+    return {
+      message: "Database Error: Failed to Create Invoice.",
+    };
+  }
+  // Revalidate the cache for the invoices page and redirect the user.
+  revalidatePath("/dashboard/customers");
+  redirect("/dashboard/customers");
 }

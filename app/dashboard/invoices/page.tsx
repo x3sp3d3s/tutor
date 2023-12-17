@@ -7,8 +7,10 @@ import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
 import { fetchInvoicesPages } from "@/app/lib/data";
 import { Metadata } from "next";
+import { auth } from "@/auth";
+
 export const metadata: Metadata = {
-  title: "Invoices",
+  title: "Classes",
 };
 export default async function Page({
   searchParams,
@@ -18,16 +20,19 @@ export default async function Page({
     page?: string;
   };
 }) {
+  const { user } = await auth();
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
-  const totalPages = await fetchInvoicesPages(query);
+  const totalPages = await fetchInvoicesPages(user, query);
+  //console.log("Total pages: " + totalPages);
+
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
-        <h1 className={`${lusitana.className} text-2xl`}>Invoices</h1>
+        <h1 className={`${lusitana.className} text-2xl`}>Factures</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        <Search placeholder="Search invoices..." />
+        <Search placeholder="Buscar Factures..." />
         <CreateInvoice />
       </div>
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
