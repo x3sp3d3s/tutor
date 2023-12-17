@@ -75,7 +75,7 @@ export default function Form() {
         >
           Cancela
         </Link>
-        <Button type="submit">Crear Alumne</Button>
+        <Button type="submit">Crear Alumne </Button>
       </div>
     </form>
   );
