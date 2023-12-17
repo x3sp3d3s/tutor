@@ -13,7 +13,10 @@ import { auth } from "@/auth";
 
 export default async function Page() {
   const { user } = await auth();
-  const reve = await fetchRevenuePerMonth(user);
+  if (user) {
+    // Use the `user` variable here
+    const reve = await fetchRevenuePerMonth(user);
+  }
   return (
     <main>
       <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
