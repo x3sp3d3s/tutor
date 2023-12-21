@@ -8,8 +8,15 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const { user } = await auth();
-  const customers = await fetchCustomersPerUser(user);
+  const user = await auth();
+  //const { user } = await auth();
+  //console.log(user.user?.email);
+
+  const userData = user?.user || {
+    name: "Anónima",
+    email: "anonymus@gmail.com",
+  };
+  const customers = await fetchCustomersPerUser(userData);
 
   return (
     <main>

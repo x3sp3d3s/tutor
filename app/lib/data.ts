@@ -353,7 +353,7 @@ export async function fetchCustomers() {
     throw new Error("Failed to fetch all customers.");
   }
 }
-export async function fetchCustomersPerUser(user: alumneField) {
+export async function fetchCustomersPerUser(user) {
   noStore();
   const { rows } = await sql`SELECT id FROM users WHERE email = ${user.email}`;
   const id = rows[0].id;
