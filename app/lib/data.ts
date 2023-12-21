@@ -1,3 +1,4 @@
+import { log } from "console";
 import { sql } from "@vercel/postgres";
 import {
   CustomerField,
@@ -476,10 +477,12 @@ export async function getUser(email: string) {
     throw new Error("Failed to fetch user.");
   }
 }
-export async function fetchRevenuePerMonth(user: alumneField) {
+export async function fetchRevenuePerMonth(user) {
   // Add noStore() here prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
   noStore();
+  console.log("user fetch", user);
+
   const { rows } = await sql`SELECT id FROM users WHERE email = ${user.email}`;
   const id = rows[0].id;
   const any = new Date().getFullYear();

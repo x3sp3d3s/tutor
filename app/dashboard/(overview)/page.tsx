@@ -12,8 +12,15 @@ import {
 import { auth } from "@/auth";
 
 export default async function Page() {
-  const { user } = await auth();
-  const userData = user?.data || { displayName: "Anónima" };
+  const user = await auth();
+  //const { user } = await auth();
+  //console.log(user.user?.email);
+
+  const userData = user?.user || {
+    name: "Anónima",
+    email: "anonymus@gmail.com",
+  };
+  console.log("user", userData);
 
   const reve = await fetchRevenuePerMonth(userData);
 
