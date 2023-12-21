@@ -163,8 +163,17 @@ export async function createCustomer(
   prevState: StateCustomer,
   formData: FormData
 ) {
-  const { user } = await auth();
-  const { rows } = await sql`SELECT id FROM users WHERE email = ${user.email}`;
+  const user = await auth();
+  //const { user } = await auth();
+  //console.log(user.user?.email);
+
+  const userData = user?.user || {
+    name: "Anónima",
+    email: "anonymus@gmail.com",
+  };
+  const {
+    rows,
+  } = await sql`SELECT id FROM users WHERE email = ${userData.email}`;
   const id = rows[0].id;
 
   // Validate form using Zod
