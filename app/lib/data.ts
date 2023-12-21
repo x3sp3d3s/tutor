@@ -222,7 +222,7 @@ LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
   }
 }
 
-export async function fetchInvoicesPages(user: alumneField, query: string) {
+export async function fetchInvoicesPages(user, query: string) {
   noStore();
   const { rows } = await sql`SELECT id FROM users WHERE email = ${user.email}`;
   const id = rows[0].id;

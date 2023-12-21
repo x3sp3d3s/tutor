@@ -20,10 +20,17 @@ export default async function Page({
     page?: string;
   };
 }) {
-  const { user } = await auth();
+  const user = await auth();
+  //const { user } = await auth();
+  //console.log(user.user?.email);
+
+  const userData = user?.user || {
+    name: "Anónima",
+    email: "anonymus@gmail.com",
+  };
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
-  const totalPages = await fetchInvoicesPages(user, query);
+  const totalPages = await fetchInvoicesPages(userData, query);
   //console.log("Total pages: " + totalPages);
 
   return (
