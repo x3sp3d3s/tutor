@@ -13,14 +13,16 @@ import { auth } from "@/auth";
 
 export default async function Page() {
   const { user } = await auth();
+  const userData = user?.data || { displayName: "Anónima" };
+
   if (user) {
     // Use the `user` variable here
-    const reve = await fetchRevenuePerMonth(user);
+    const reve = await fetchRevenuePerMonth(userData);
 
     return (
       <main>
         <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
-          Dashboard <span className="text-sm ml-4">{user.name}</span>
+          Dashboard <span className="text-sm ml-4">{userData?.name}</span>
         </h1>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <Suspense fallback={<CardsSkeleton />}>
@@ -32,7 +34,7 @@ export default async function Page() {
             <RevenueChart />
           </Suspense>
           <Suspense fallback={<LatestInvoicesSkeleton />}>
-            <LatestInvoices user={user} />
+            <LatestInvoices user={userData} />
           </Suspense>
         </div>
       </main>
