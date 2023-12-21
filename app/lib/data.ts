@@ -248,7 +248,7 @@ export async function fetchInvoicesPages(user: alumneField, query: string) {
   }
 }
 /* testing */
-export async function fetchCostumersPages(user: alumneField, query: string) {
+export async function fetchCostumersPages(user, query: string) {
   noStore();
   const { rows } = await sql`SELECT id FROM users WHERE email = ${user.email}`;
   const id = rows[0].id;

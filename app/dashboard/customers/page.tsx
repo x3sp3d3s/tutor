@@ -20,9 +20,15 @@ export default async function Page({
     page?: string;
   };
 }) {
+  const user = await auth();
+  //const { user } = await auth();
+  //console.log(user.user?.email);
+
+  const userData = user?.user || {
+    name: "Anónima",
+    email: "anonymus@gmail.com",
+  };
   const query = searchParams?.query || "";
-  const { user } = await auth();
-  const userData = user?.data || { displayName: "Anónima" };
 
   const totalPages = await fetchCostumersPages(userData, query);
 

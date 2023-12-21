@@ -20,7 +20,6 @@ export default async function Page() {
     name: "Anónima",
     email: "anonymus@gmail.com",
   };
-  console.log("user", userData);
 
   const reve = await fetchRevenuePerMonth(userData);
 
