@@ -22,8 +22,9 @@ export default async function Page({
 }) {
   const query = searchParams?.query || "";
   const { user } = await auth();
+  const userData = user?.data || { displayName: "Anónima" };
   if (user) {
-    const totalPages = await fetchCostumersPages(user, query);
+    const totalPages = await fetchCostumersPages(userData, query);
 
     const currentPage = Number(searchParams?.page) || 1;
     return (
