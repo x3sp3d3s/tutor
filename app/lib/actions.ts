@@ -159,14 +159,8 @@ export async function deleteCustomerWithId(id: string) {
     return { message: "Database Error: Alumne NO eliminat." };
   }
 }
-export async function createCustomer(
-  prevState: StateCustomer,
-  formData: FormData
-) {
+export async function createCustomer(prevState: State, formData: FormData) {
   const user = await auth();
-  //const { user } = await auth();
-  //console.log(user.user?.email);
-
   const userData = user?.user || {
     name: "Anónima",
     email: "anonymus@gmail.com",
@@ -176,13 +170,13 @@ export async function createCustomer(
   } = await sql`SELECT id FROM users WHERE email = ${userData.email}`;
   const id = rows[0].id;
 
-  // Validate form using Zod
+  // Validar formulario usando Zod
   const validatedFields = CreateCustomer.safeParse({
     customerNom: formData.get("customerNom"),
     customerEmail: formData.get("customerEmail"),
   });
 
-  // If form validation fails, return errors early. Otherwise, continue.
+  // Si la validación del formulario falla, devuelva errores temprano. De lo contrario, continúe.
   if (!validatedFields.success) {
     console.log("FAIL");
 
@@ -192,14 +186,14 @@ export async function createCustomer(
     };
   }
 
-  // Prepare data for insertion into the database
+  // Preparar datos para la inserción en la base de datos
   const { customerNom, customerEmail } = validatedFields.data;
   const uuid = uuidv4();
   const image_url = "/customers/emil-kowalski.png";
   //const tutor = "80c01086-b916-40ff-a3d4-ebc43256a26b";
   console.log("PASS: ", customerNom, customerEmail, uuid, image_url, id);
 
-  // Insert data into the database
+  // Insertar datos en la base de datos
   try {
     await sql`
         INSERT INTO customers (id, name, email, image_url,tutor)
@@ -207,12 +201,12 @@ export async function createCustomer(
       `;
     console.log("TRY: ", customerNom, customerEmail, uuid);
   } catch (error) {
-    // If a database error occurs, return a more specific error.
+    // Si se produce un error en la base de datos, devuelva un error más específico.
     return {
       message: "Database Error: Failed to Create Invoice.",
     };
   }
-  // Revalidate the cache for the invoices page and redirect the user.
+  // Revalidar la caché de la página de facturas y redirigir al usuario.
   revalidatePath("/dashboard/customers");
   redirect("/dashboard/customers");
 }

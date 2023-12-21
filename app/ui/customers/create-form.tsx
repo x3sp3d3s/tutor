@@ -4,10 +4,45 @@ import { UserCircleIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/app/ui/button";
 import { createCustomer } from "@/app/lib/actions";
 import { useFormState } from "react-dom";
+type State = {
+  errors: null | {
+    customerNom?: string[];
+    customerEmail?: string[];
+  };
+  message: string;
+};
+function formDataToState(formData: FormData): State {
+  const errors: { customerNom?: string[]; customerEmail?: string[] } = {};
+  if (formData.get("customerNom")) {
+    errors.customerNom = formData
+      .get("customerNom")
+      ?.toString()
+      ?.trim()
+      ?.split(",")
+      .map((name: string) => name.trim());
+  }
+  if (formData.get("customerEmail")) {
+    errors.customerEmail = formData
+      .get("customerEmail")
+      ?.toString()
+      ?.trim()
+      ?.split(",")
+      .map((email: string) => email.trim());
+  }
+
+  return {
+    errors,
+    message: "null",
+  };
+}
+
+function initialFormState() {
+  return formDataToState(new FormData());
+}
 
 export default function Form() {
-  const initialState = { errors: null, message: null };
-  const [state, dispatch] = useFormState(createCustomer, initialState);
+  const [state, dispatch] = useFormState(createCustomer, initialFormState());
+
   console.log("state: ", state);
 
   return (
