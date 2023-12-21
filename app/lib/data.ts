@@ -222,7 +222,7 @@ LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
   }
 }
 
-export async function fetchInvoicesPages(user, query: string) {
+export async function fetchInvoicesPages(user: any, query: string) {
   noStore();
   const { rows } = await sql`SELECT id FROM users WHERE email = ${user.email}`;
   const id = rows[0].id;
@@ -248,7 +248,7 @@ export async function fetchInvoicesPages(user, query: string) {
   }
 }
 /* testing */
-export async function fetchCostumersPages(user, query: string) {
+export async function fetchCostumersPages(user: any, query: string) {
   noStore();
   const { rows } = await sql`SELECT id FROM users WHERE email = ${user.email}`;
   const id = rows[0].id;
@@ -353,7 +353,7 @@ export async function fetchCustomers() {
     throw new Error("Failed to fetch all customers.");
   }
 }
-export async function fetchCustomersPerUser(user) {
+export async function fetchCustomersPerUser(user: any) {
   noStore();
   const { rows } = await sql`SELECT id FROM users WHERE email = ${user.email}`;
   const id = rows[0].id;
@@ -477,7 +477,7 @@ export async function getUser(email: string) {
     throw new Error("Failed to fetch user.");
   }
 }
-export async function fetchRevenuePerMonth(user) {
+export async function fetchRevenuePerMonth(user: any) {
   // Add noStore() here prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
   noStore();
