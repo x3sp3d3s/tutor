@@ -90,7 +90,7 @@ export async function fetchCardData() {
     throw new Error("Failed to fetch card data.");
   }
 }
-export async function fetchCardDataPerUser(user: alumneField) {
+export async function fetchCardDataPerUser(user: any) {
   noStore();
   const { rows } = await sql`SELECT id FROM users WHERE email = ${user.email}`;
   const id = rows[0].id;

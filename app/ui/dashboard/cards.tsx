@@ -17,14 +17,17 @@ const iconMap = {
 };
 
 export default async function CardWrapper() {
-  const { user } = await auth();
-  //console.log("data -->", user);
+  const user = await auth();
+  const userData = user?.user || {
+    name: "Anónima",
+    email: "anonymus@gmail.com",
+  };
   const {
     numberOfInvoices,
     numberOfCustomers,
     totalPaidInvoices,
     totalPendingInvoices,
-  } = await fetchCardDataPerUser(user);
+  } = await fetchCardDataPerUser(userData);
   return (
     <>
       {/* NOTE: comment in this code when you get to this point in the course */}

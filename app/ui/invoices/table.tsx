@@ -12,10 +12,14 @@ export default async function InvoicesTable({
   query: string;
   currentPage: number;
 }) {
-  const { user } = await auth();
+  const user = await auth();
+  const userData = user?.user || {
+    name: "Anónima",
+    email: "anonymus@gmail.com",
+  };
   //const invoices = await fetchFilteredInvoices(query, currentPage);
   const invoices = await fetchFilteredInvoicesPerTutor(
-    user,
+    userData,
     query,
     currentPage
   );

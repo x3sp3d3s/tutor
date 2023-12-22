@@ -13,9 +13,6 @@ export default async function CustomersTable({
   currentPage: number;
 }) {
   const user = await auth();
-  //const { user } = await auth();
-  //console.log(user.user?.email);
-
   const userData = user?.user || {
     name: "Anónima",
     email: "anonymus@gmail.com",
