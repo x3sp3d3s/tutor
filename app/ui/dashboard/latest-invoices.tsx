@@ -5,7 +5,9 @@ import { lusitana } from "@/app/ui/fonts";
 import { fetchLatestInvoices } from "@/app/lib/data";
 import { alumneField } from "@/app/lib/definitions";
 
-export default async function LatestInvoices({ user }) {
+export default async function LatestInvoices({ user }: any) {
+  console.log("user lastest ---->", user);
+
   // Remove props
   const latestInvoices = await fetchLatestInvoices(user);
   return (
