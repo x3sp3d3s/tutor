@@ -21,9 +21,6 @@ export default async function Page({
   };
 }) {
   const user = await auth();
-  //const { user } = await auth();
-  //console.log(user.user?.email);
-
   const userData = user?.user || {
     name: "Anónima",
     email: "anonymus@gmail.com",
@@ -31,8 +28,10 @@ export default async function Page({
   const query = searchParams?.query || "";
 
   const totalPages = await fetchCostumersPages(userData, query);
+  console.log("totalpages", totalPages);
 
   const currentPage = Number(searchParams?.page) || 1;
+
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">

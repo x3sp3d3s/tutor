@@ -1,9 +1,7 @@
 import Image from "next/image";
-import { lusitana } from "@/app/ui/fonts";
-import Search from "@/app/ui/search";
-import { CustomersTable, FormattedCustomersTable } from "@/app/lib/definitions";
-import { CreateInvoice, DeleteInvoice } from "./buttons";
-import { formatDateToLocal, formatCurrency } from "@/app/lib/utils";
+import { CustomersTable } from "@/app/lib/definitions";
+import { DeleteInvoice } from "./buttons";
+import { formatCurrency } from "@/app/lib/utils";
 import { auth } from "@/auth";
 import { fetchFilteredCustomersPerTutor } from "@/app/lib/data";
 
@@ -14,12 +12,20 @@ export default async function CustomersTable({
   query: string;
   currentPage: number;
 }) {
-  const { user } = await auth();
+  const user = await auth();
+  //const { user } = await auth();
+  //console.log(user.user?.email);
+
+  const userData = user?.user || {
+    name: "Anónima",
+    email: "anonymus@gmail.com",
+  };
   const customers = await fetchFilteredCustomersPerTutor(
-    user,
+    userData,
     query,
     currentPage
   );
+  //console.log("customers", customers);
 
   return (
     <>

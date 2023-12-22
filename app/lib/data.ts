@@ -180,7 +180,7 @@ export async function fetchFilteredInvoices(
   }
 }
 export async function fetchFilteredInvoicesPerTutor(
-  user: alumneField,
+  user: any,
   query: string,
   currentPage: number
 ) {
@@ -270,7 +270,7 @@ export async function fetchCostumersPages(user: any, query: string) {
   }
 }
 export async function fetchFilteredCustomersPerTutor(
-  user: alumneField,
+  user: any,
   query: string,
   currentPage: number
 ) {
@@ -287,11 +287,11 @@ export async function fetchFilteredCustomersPerTutor(
     customers.name,
     customers.email,
     customers.image_url,
-    COUNT(*) AS total_invoices,
-    SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
-    SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid   
-FROM customers
-INNER JOIN invoices ON customers.id = invoices.customer_id
+    COUNT(DISTINCT invoices.id) AS total_invoices,
+    SUM(CASE WHEN invoices.status = 'pending' AND invoices.id IS NOT NULL THEN invoices.amount ELSE 0 END) AS total_pending,
+    SUM(CASE WHEN invoices.status = 'paid' AND invoices.id IS NOT NULL THEN invoices.amount ELSE 0 END) AS total_paid
+  FROM customers
+  LEFT JOIN invoices ON customers.id = invoices.customer_id
 WHERE (customers.tutor = ${id})
 AND (
   customers.name ILIKE ${`%${query}%`} OR
@@ -481,7 +481,7 @@ export async function fetchRevenuePerMonth(user: any) {
   // Add noStore() here prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
   noStore();
-  console.log("user fetch", user);
+  console.log("user fetch revenue", user);
 
   const { rows } = await sql`SELECT id FROM users WHERE email = ${user.email}`;
   const id = rows[0].id;
@@ -506,7 +506,7 @@ export async function fetchRevenuePerMonth(user: any) {
     invoices.customer_id = customers.id
   WHERE
     date_part('year', invoices.date) = date_part('year', now())
-    AND customers.tutor = '80c01086-b916-40ff-a3d4-ebc43256a26b'
+    AND customers.tutor = ${id}
   AND status ='paid'
   GROUP BY
     date_part('month', date),

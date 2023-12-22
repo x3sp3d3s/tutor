@@ -3,50 +3,10 @@ import Link from "next/link";
 import { UserCircleIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/app/ui/button";
 import { createCustomer } from "@/app/lib/actions";
-import { useFormState } from "react-dom";
-type State = {
-  errors: null | {
-    customerNom?: string[];
-    customerEmail?: string[];
-  };
-  message: string;
-};
-function formDataToState(formData: FormData): State {
-  const errors: { customerNom?: string[]; customerEmail?: string[] } = {};
-  if (formData.get("customerNom")) {
-    errors.customerNom = formData
-      .get("customerNom")
-      ?.toString()
-      ?.trim()
-      ?.split(",")
-      .map((name: string) => name.trim());
-  }
-  if (formData.get("customerEmail")) {
-    errors.customerEmail = formData
-      .get("customerEmail")
-      ?.toString()
-      ?.trim()
-      ?.split(",")
-      .map((email: string) => email.trim());
-  }
-
-  return {
-    errors,
-    message: "null",
-  };
-}
-
-function initialFormState() {
-  return formDataToState(new FormData());
-}
 
 export default function Form() {
-  const [state, dispatch] = useFormState(createCustomer, initialFormState());
-
-  console.log("state: ", state);
-
   return (
-    <form action={dispatch}>
+    <form action={createCustomer}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
@@ -66,12 +26,12 @@ export default function Form() {
             <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
           </div>
           <div id="nom-error" aria-live="polite" aria-atomic="true">
-            {state?.errors &&
+            {/*  {state?.errors &&
               state.errors?.customerNom.map((error: string) => (
                 <p className="mt-2 text-sm text-red-500" key={error}>
                   {error}
                 </p>
-              ))}
+              ))} */}
           </div>
         </div>
 
@@ -93,12 +53,12 @@ export default function Form() {
             </div>
             {/* error */}
             <div id="email-error" aria-live="polite" aria-atomic="true">
-              {state?.errors &&
+              {/* {state?.errors &&
                 state.errors?.customerEmail.map((error: string) => (
                   <p className="mt-2 text-sm text-red-500" key={error}>
                     {error}
                   </p>
-                ))}
+                ))} */}
             </div>
           </div>
         </div>
